@@ -75,9 +75,9 @@ end)
 -- // 🎨 UI SETUP (RAYFIELD) //
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 local Window = Rayfield:CreateWindow({
-   Name = "🌸 Kae Tempest | Fish It v2.6 🌸",
+   Name = "🌸 Kae Tempest | Fish It V0.1 🌸",
    LoadingTitle = "Kae Tempest Hub",
-   LoadingSubtitle = "Lynx & Meng Hub standard",
+   LoadingSubtitle = "誰もが楽しく快適に過ごせる国を作る",
    ConfigurationSaving = { Enabled = false }
 })
 
@@ -127,4 +127,4 @@ MiscTab:CreateButton({
    Callback = function() game:GetService("TeleportService"):Teleport(game.PlaceId, lp) end,
 })
 
-Rayfield:Notify({Title = "Kae Tempest Hub", Content = "Semua fitur Lynx & Meng Hub aktif!", Duration = 5})
+Rayfield:Notify({Title = "Kae Tempest Hub", Content = "Enjoy Semoga Secret!", Duration = 5})
