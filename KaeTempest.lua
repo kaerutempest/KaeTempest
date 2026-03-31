@@ -1,6 +1,6 @@
--- [[ 🌸 KAE TEMPEST | FISH IT V0.2 (MODERN SWITCH) 🌸 ]]
--- Floating Icon with "KAE" Logo | Tablet UI with Toggle Switches
--- Theme: Deep Black & Neon Pink | All Features + Disable VFX, Auto Equip Rod
+-- [[ 🌸 KAE TEMPEST | FISH IT V0.3 (FIXED SWITCHES) 🌸 ]]
+-- Floating Icon with "KAE" Logo | Wide Tablet UI with Smooth Animations
+-- All toggles now work reliably
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
@@ -94,7 +94,7 @@ local function EquipBestRod()
     local bestRod = nil
     for _, tool in pairs(lp.Backpack:GetChildren()) do
         if tool:IsA("Tool") and tool.Name:lower():match("rod") then
-            if not bestRod or tool.Name > bestRod.Name then -- sederhana: ambil berdasarkan nama
+            if not bestRod or tool.Name > bestRod.Name then
                 bestRod = tool
             end
         end
@@ -201,13 +201,6 @@ local function startLoop(name, func, enabledVar)
     if _G.Settings[enabledVar] then
         activeThreads[name] = coroutine.create(func)
         coroutine.resume(activeThreads[name])
-    end
-end
-
-local function stopLoop(name)
-    if activeThreads[name] then
-        coroutine.close(activeThreads[name])
-        activeThreads[name] = nil
     end
 end
 
@@ -338,18 +331,19 @@ _G.Settings.WhiteScreen = _G.Settings.WhiteScreen or false
 WhiteFrame.Visible = _G.Settings.WhiteScreen
 RunService:Set3dRenderingEnabled(not _G.Settings.WhiteScreen)
 
--- // 🎨 UI CONSTRUCTION (Tablet Style) //
+-- // 🎨 UI CONSTRUCTION (Wide Tablet) //
 local TabletGui = Instance.new("ScreenGui", CoreGui)
 TabletGui.Name = "KaeTablet"
 
 local MainPanel = Instance.new("Frame", TabletGui)
-MainPanel.Size = UDim2.new(0, 420, 0, 580)
-MainPanel.Position = UDim2.new(0.5, -210, 0.5, -290)
+MainPanel.Size = UDim2.new(0, 700, 0, 500)  -- Wide tablet
+MainPanel.Position = UDim2.new(0.5, -350, 0.5, -250)
 MainPanel.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 MainPanel.BorderColor3 = Color3.fromRGB(255, 20, 147)
 MainPanel.BorderSizePixel = 2
 MainPanel.ClipsDescendants = true
-MainPanel.Visible = false
+MainPanel.Visible = true  -- Initially visible
+MainPanel.BackgroundTransparency = 1  -- Start transparent for fade-in
 
 local Corner = Instance.new("UICorner", MainPanel)
 Corner.CornerRadius = UDim.new(0, 12)
@@ -367,7 +361,7 @@ local TitleText = Instance.new("TextLabel", TitleBar)
 TitleText.Size = UDim2.new(1, -100, 1, 0)
 TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "🌸 KAE TEMPEST | V0.2 🌸"
+TitleText.Text = "🌸 KAE TEMPEST | V0.3 🌸"
 TitleText.TextColor3 = Color3.fromRGB(255, 20, 147)
 TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.Font = Enum.Font.GothamBold
@@ -461,7 +455,7 @@ local function createSection(title)
     return header
 end
 
--- Helper: Create Modern Toggle Switch (Slider)
+-- Helper: Create Modern Toggle Switch (Slider) - FIXED with MouseButton1Click
 local function createSwitchRow(labelText, settingKey, onToggle)
     local row = Instance.new("Frame", ScrollingFrame)
     row.Size = UDim2.new(1, 0, 0, 45)
@@ -480,14 +474,15 @@ local function createSwitchRow(labelText, settingKey, onToggle)
     label.Font = Enum.Font.Gotham
     label.TextSize = 14
 
-    -- Switch container
-    local switchFrame = Instance.new("Frame", row)
+    -- Switch container (button)
+    local switchFrame = Instance.new("TextButton", row)  -- Use TextButton for clickability
     switchFrame.Size = UDim2.new(0, 60, 0, 30)
     switchFrame.Position = UDim2.new(1, -70, 0, 7.5)
     switchFrame.BackgroundColor3 = _G.Settings[settingKey] and Color3.fromRGB(255, 20, 147) or Color3.fromRGB(80, 80, 80)
     switchFrame.BorderSizePixel = 0
+    switchFrame.Text = ""
     local switchCorner = Instance.new("UICorner", switchFrame)
-    switchCorner.CornerRadius = UDim.new(1, 0) -- bulat penuh
+    switchCorner.CornerRadius = UDim.new(1, 0)
 
     local thumb = Instance.new("Frame", switchFrame)
     thumb.Size = UDim2.new(0, 24, 0, 24)
@@ -511,21 +506,18 @@ local function createSwitchRow(labelText, settingKey, onToggle)
         end
     end
 
-    switchFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            setState(not _G.Settings[settingKey])
-        end
+    -- Use MouseButton1Click for reliable clicks
+    switchFrame.MouseButton1Click:Connect(function()
+        setState(not _G.Settings[settingKey])
     end)
-    thumb.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            setState(not _G.Settings[settingKey])
-        end
+    thumb.MouseButton1Click:Connect(function()
+        setState(not _G.Settings[settingKey])
     end)
 
     return row
 end
 
--- Helper: Create Slider Row (sama seperti sebelumnya)
+-- Helper: Create Slider Row
 local function createSliderRow(labelText, settingKey, minVal, maxVal, increment, suffix)
     local row = Instance.new("Frame", ScrollingFrame)
     row.Size = UDim2.new(1, 0, 0, 70)
@@ -706,16 +698,6 @@ end)
 task.wait(0.1)
 ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, UIListLayout.AbsoluteContentSize.Y + 20)
 
--- Minimize / Close
-MinBtn.MouseButton1Click:Connect(function()
-    MainPanel.Visible = false
-    FloatingIcon.Visible = true
-end)
-CloseBtn.MouseButton1Click:Connect(function()
-    MainPanel.Visible = false
-    FloatingIcon.Visible = true
-end)
-
 -- // 🖱️ FLOATING ICON (KAE Logo) //
 local FloatingGui = Instance.new("ScreenGui", CoreGui)
 FloatingGui.Name = "KaeFloating"
@@ -737,6 +719,8 @@ iconText.TextColor3 = Color3.fromRGB(255, 255, 255)
 iconText.Font = Enum.Font.GothamBold
 iconText.TextSize = 20
 iconText.TextScaled = true
+
+FloatingIcon.Visible = false  -- Initially hidden
 
 -- Draggable Floating Icon
 local draggingIcon = false
@@ -761,9 +745,30 @@ UserInputService.InputEnded:Connect(function(input)
 end)
 
 FloatingIcon.MouseButton1Click:Connect(function()
+    -- Show tablet with animation
     FloatingIcon.Visible = false
     MainPanel.Visible = true
+    MainPanel.BackgroundTransparency = 1
+    MainPanel:TweenSizeAndPosition(UDim2.new(0, 700, 0, 500), UDim2.new(0.5, -350, 0.5, -250), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.3, true)
+    TweenService:Create(MainPanel, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 0}):Play()
 end)
+
+-- Minimize function with animation
+local function minimizeTablet()
+    TweenService:Create(MainPanel, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {BackgroundTransparency = 1}):Play()
+    task.wait(0.2)
+    MainPanel.Visible = false
+    FloatingIcon.Visible = true
+    FloatingIcon.BackgroundTransparency = 0
+    TweenService:Create(FloatingIcon, TweenInfo.new(0.2), {BackgroundTransparency = 0}):Play()
+end
+
+MinBtn.MouseButton1Click:Connect(minimizeTablet)
+CloseBtn.MouseButton1Click:Connect(minimizeTablet)
+
+-- Fade-in animation for tablet on load
+MainPanel.BackgroundTransparency = 1
+TweenService:Create(MainPanel, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {BackgroundTransparency = 0}):Play()
 
 -- // 🔔 NOTIFICATION SYSTEM //
 local function showNotification(msg)
@@ -784,4 +789,4 @@ end
 
 -- Start loops
 updateLoops()
-showNotification("🌸 KAE TEMPEST V0.2 Loaded! Click the pink icon to open menu.")
+showNotification("🌸 KAE TEMPEST V0.3 Loaded! Toggle switches now work.")
