@@ -1,6 +1,6 @@
--- [[ 🌸 KAE TEMPEST HUB | FISH IT V1.5 ]]
--- Added small popups (tablet-friendly) for Instant Fishing, Auto Cast, Auto Sell, Anti Staff
--- Based on reference image: smaller popup with switch, delay input, mode, and save button
+-- [[ 🌸 KAE TEMPEST HUB | FISH IT V1.6 ]]
+-- Popup style like reference image: small, simple, with input box for delay, mode dropdown, and save button
+-- All features: Instant Fishing, Auto Cast, Auto Sell, Anti Staff use same style
 
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -193,7 +193,7 @@ local IconStroke = Instance.new("UIStroke", FloatingIcon)
 IconStroke.Color = _G.Settings.ThemeColor
 IconStroke.Thickness = 2.5
 
--- Main Frame (slightly taller for more content)
+-- Main Frame
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 580, 0, 380)
 MainFrame.Position = UDim2.new(0.5, -290, 0.5, -190)
@@ -218,7 +218,7 @@ HeaderCorner.CornerRadius = UDim.new(0, 10)
 local Title = Instance.new("TextLabel", Header)
 Title.Size = UDim2.new(1, -100, 1, 0)
 Title.Position = UDim2.new(0, 15, 0, 0)
-Title.Text = "🌸 KAE TEMPEST HUB | FISH IT V1.5"
+Title.Text = "🌸 KAE TEMPEST HUB | FISH IT V1.6"
 Title.TextColor3 = Color3.fromRGB(240, 240, 240)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 14
@@ -353,40 +353,40 @@ local function CreateSwitch(parent, initial, callback)
     return frame
 end
 
--- Small popup (tablet style)
-local function ShowSmallPopup(title, contentBuilder)
+-- Small popup like reference image
+local function ShowSimplePopup(title, contentBuilder)
     local popup = Instance.new("Frame", ScreenGui)
-    popup.Size = UDim2.new(0, 280, 0, 180)
-    popup.Position = UDim2.new(0.5, -140, 0.5, -90)
+    popup.Size = UDim2.new(0, 260, 0, 160)
+    popup.Position = UDim2.new(0.5, -130, 0.5, -80)
     popup.BackgroundColor3 = _G.Settings.BgColor
     popup.BackgroundTransparency = 0.1
     popup.BorderSizePixel = 0
     popup.ZIndex = 20
     local corner = Instance.new("UICorner", popup)
-    corner.CornerRadius = UDim.new(0, 10)
+    corner.CornerRadius = UDim.new(0, 8)
     local stroke = Instance.new("UIStroke", popup)
     stroke.Color = _G.Settings.ThemeColor
     stroke.Thickness = 1.5
     
     local header = Instance.new("Frame", popup)
-    header.Size = UDim2.new(1, 0, 0, 35)
+    header.Size = UDim2.new(1, 0, 0, 32)
     header.BackgroundColor3 = _G.Settings.HeaderColor
     local headerCorner = Instance.new("UICorner", header)
-    headerCorner.CornerRadius = UDim.new(0, 10)
+    headerCorner.CornerRadius = UDim.new(0, 8)
     
     local titleLabel = Instance.new("TextLabel", header)
     titleLabel.Size = UDim2.new(1, -40, 1, 0)
-    titleLabel.Position = UDim2.new(0, 15, 0, 0)
+    titleLabel.Position = UDim2.new(0, 12, 0, 0)
     titleLabel.Text = title
     titleLabel.TextColor3 = Color3.fromRGB(240,240,240)
     titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextSize = 13
+    titleLabel.TextSize = 12
     titleLabel.BackgroundTransparency = 1
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
     
     local close = Instance.new("TextButton", header)
-    close.Size = UDim2.new(0, 35, 1, 0)
-    close.Position = UDim2.new(1, -35, 0, 0)
+    close.Size = UDim2.new(0, 32, 1, 0)
+    close.Position = UDim2.new(1, -32, 0, 0)
     close.Text = "✕"
     close.TextColor3 = Color3.fromRGB(255,255,255)
     close.BackgroundTransparency = 1
@@ -395,107 +395,15 @@ local function ShowSmallPopup(title, contentBuilder)
     close.MouseButton1Click:Connect(function() popup:Destroy() end)
     
     local content = Instance.new("Frame", popup)
-    content.Size = UDim2.new(1, -20, 1, -45)
-    content.Position = UDim2.new(0, 10, 0, 40)
+    content.Size = UDim2.new(1, -16, 1, -45)
+    content.Position = UDim2.new(0, 8, 0, 40)
     content.BackgroundTransparency = 1
     
     contentBuilder(content, function() popup:Destroy() end)
 end
 
--- Slider (compact for small popup)
-local function CreateSliderSmall(parent, label, minVal, maxVal, default, callback)
-    local frame = Instance.new("Frame", parent)
-    frame.Size = UDim2.new(1, 0, 0, 45)
-    frame.BackgroundTransparency = 1
-    
-    local labelText = Instance.new("TextLabel", frame)
-    labelText.Size = UDim2.new(1, 0, 0, 18)
-    labelText.Text = label .. ": " .. tostring(default)
-    labelText.TextColor3 = Color3.fromRGB(200,200,200)
-    labelText.Font = Enum.Font.Gotham
-    labelText.TextSize = 12
-    labelText.BackgroundTransparency = 1
-    labelText.TextXAlignment = Enum.TextXAlignment.Left
-    
-    local sliderFrame = Instance.new("Frame", frame)
-    sliderFrame.Size = UDim2.new(0.65, 0, 0, 18)
-    sliderFrame.Position = UDim2.new(0, 0, 0, 22)
-    sliderFrame.BackgroundColor3 = Color3.fromRGB(50,50,50)
-    sliderFrame.BorderSizePixel = 0
-    local sliderCorner = Instance.new("UICorner", sliderFrame)
-    sliderCorner.CornerRadius = UDim.new(1,0)
-    
-    local fill = Instance.new("Frame", sliderFrame)
-    fill.Size = UDim2.new((default-minVal)/(maxVal-minVal), 0, 1, 0)
-    fill.BackgroundColor3 = _G.Settings.ThemeColor
-    fill.BorderSizePixel = 0
-    local fillCorner = Instance.new("UICorner", fill)
-    fillCorner.CornerRadius = UDim.new(1,0)
-    
-    local knob = Instance.new("Frame", sliderFrame)
-    knob.Size = UDim2.new(0, 14, 0, 14)
-    knob.Position = UDim2.new((default-minVal)/(maxVal-minVal), -7, 0.5, -7)
-    knob.BackgroundColor3 = Color3.fromRGB(255,255,255)
-    local knobCorner = Instance.new("UICorner", knob)
-    knobCorner.CornerRadius = UDim.new(1,0)
-    
-    local inputBox = Instance.new("TextBox", frame)
-    inputBox.Size = UDim2.new(0.3, 0, 0, 22)
-    inputBox.Position = UDim2.new(0.7, 5, 0, 20)
-    inputBox.Text = tostring(default)
-    inputBox.TextColor3 = Color3.fromRGB(255,255,255)
-    inputBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
-    inputBox.Font = Enum.Font.Gotham
-    inputBox.TextSize = 11
-    local inputCorner = Instance.new("UICorner", inputBox)
-    inputCorner.CornerRadius = UDim.new(0, 5)
-    
-    local function updateValue(val)
-        val = math.clamp(val, minVal, maxVal)
-        local percent = (val - minVal) / (maxVal - minVal)
-        fill.Size = UDim2.new(percent, 0, 1, 0)
-        knob.Position = UDim2.new(percent, -7, 0.5, -7)
-        labelText.Text = label .. ": " .. string.format("%.2f", val)
-        inputBox.Text = string.format("%.2f", val)
-        callback(val)
-    end
-    
-    knob.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local dragConn
-            dragConn = UserInputService.InputChanged:Connect(function(inp)
-                if inp.UserInputType == Enum.UserInputType.MouseMovement then
-                    local mouseX = inp.Position.X
-                    local framePos = sliderFrame.AbsolutePosition.X
-                    local width = sliderFrame.AbsoluteSize.X
-                    local percent = (mouseX - framePos) / width
-                    percent = math.clamp(percent, 0, 1)
-                    local newVal = minVal + percent * (maxVal - minVal)
-                    updateValue(newVal)
-                end
-            end)
-            UserInputService.InputEnded:Connect(function(inp)
-                if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-                    dragConn:Disconnect()
-                end
-            end)
-        end
-    end)
-    
-    inputBox.FocusLost:Connect(function()
-        local num = tonumber(inputBox.Text)
-        if num then
-            updateValue(num)
-        else
-            inputBox.Text = tostring(default)
-        end
-    end)
-    
-    return frame
-end
-
--- Dropdown compact
-local function CreateDropdownSmall(parent, label, options, default, callback)
+-- Input box helper
+local function CreateInputBox(parent, label, default, callback)
     local frame = Instance.new("Frame", parent)
     frame.Size = UDim2.new(1, 0, 0, 40)
     frame.BackgroundTransparency = 1
@@ -509,24 +417,64 @@ local function CreateDropdownSmall(parent, label, options, default, callback)
     labelText.BackgroundTransparency = 1
     labelText.TextXAlignment = Enum.TextXAlignment.Left
     
+    local inputBox = Instance.new("TextBox", frame)
+    inputBox.Size = UDim2.new(0.5, 0, 1, -4)
+    inputBox.Position = UDim2.new(0.45, 0, 0, 2)
+    inputBox.Text = tostring(default)
+    inputBox.PlaceholderText = "Write ur input here"
+    inputBox.TextColor3 = Color3.fromRGB(255,255,255)
+    inputBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
+    inputBox.Font = Enum.Font.Gotham
+    inputBox.TextSize = 12
+    local inputCorner = Instance.new("UICorner", inputBox)
+    inputCorner.CornerRadius = UDim.new(0, 4)
+    
+    inputBox.FocusLost:Connect(function()
+        local num = tonumber(inputBox.Text)
+        if num then
+            callback(num)
+        else
+            inputBox.Text = tostring(default)
+            callback(default)
+        end
+    end)
+    
+    return frame
+end
+
+-- Dropdown compact
+local function CreateDropdownSimple(parent, label, options, default, callback)
+    local frame = Instance.new("Frame", parent)
+    frame.Size = UDim2.new(1, 0, 0, 36)
+    frame.BackgroundTransparency = 1
+    
+    local labelText = Instance.new("TextLabel", frame)
+    labelText.Size = UDim2.new(0.4, 0, 1, 0)
+    labelText.Text = label
+    labelText.TextColor3 = Color3.fromRGB(200,200,200)
+    labelText.Font = Enum.Font.Gotham
+    labelText.TextSize = 12
+    labelText.BackgroundTransparency = 1
+    labelText.TextXAlignment = Enum.TextXAlignment.Left
+    
     local dropdownBtn = Instance.new("TextButton", frame)
-    dropdownBtn.Size = UDim2.new(0.5, 0, 1, 0)
-    dropdownBtn.Position = UDim2.new(0.5, 0, 0, 0)
+    dropdownBtn.Size = UDim2.new(0.5, 0, 1, -4)
+    dropdownBtn.Position = UDim2.new(0.45, 0, 0, 2)
     dropdownBtn.Text = default
     dropdownBtn.BackgroundColor3 = Color3.fromRGB(40,40,40)
     dropdownBtn.Font = Enum.Font.Gotham
     dropdownBtn.TextSize = 12
     local btnCorner = Instance.new("UICorner", dropdownBtn)
-    btnCorner.CornerRadius = UDim.new(0, 5)
+    btnCorner.CornerRadius = UDim.new(0, 4)
     
     local dropdownMenu = Instance.new("Frame", frame)
     dropdownMenu.Size = UDim2.new(0.5, 0, 0, 0)
-    dropdownMenu.Position = UDim2.new(0.5, 0, 1, 0)
+    dropdownMenu.Position = UDim2.new(0.45, 0, 1, 0)
     dropdownMenu.BackgroundColor3 = Color3.fromRGB(30,30,30)
     dropdownMenu.Visible = false
     dropdownMenu.ZIndex = 2
     local menuCorner = Instance.new("UICorner", dropdownMenu)
-    menuCorner.CornerRadius = UDim.new(0, 5)
+    menuCorner.CornerRadius = UDim.new(0, 4)
     local listLayout = Instance.new("UIListLayout", dropdownMenu)
     listLayout.Padding = UDim.new(0, 2)
     
@@ -558,34 +506,8 @@ local function CreateDropdownSmall(parent, label, options, default, callback)
     return frame
 end
 
--- Feature with modern toggle (no popup)
-local function AddToggleFeature(parent, text, settingKey, callback)
-    local Row = Instance.new("Frame", parent)
-    Row.Size = UDim2.new(1, -12, 0, 50)
-    Row.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-    local RowCorner = Instance.new("UICorner", Row); RowCorner.CornerRadius = UDim.new(0, 8)
-    
-    local Label = Instance.new("TextLabel", Row)
-    Label.Size = UDim2.new(1, -70, 1, 0)
-    Label.Position = UDim2.new(0, 18, 0, 0)
-    Label.Text = text
-    Label.TextColor3 = Color3.fromRGB(230, 230, 230)
-    Label.Font = Enum.Font.Gotham
-    Label.TextSize = 14
-    Label.BackgroundTransparency = 1
-    Label.TextXAlignment = Enum.TextXAlignment.Left
-    
-    local switch = CreateSwitch(Row, _G.Settings[settingKey], function(state)
-        _G.Settings[settingKey] = state
-        if callback then callback(state) end
-    end)
-    switch.Position = UDim2.new(1, -65, 0.5, -14)
-    
-    return Row
-end
-
--- Feature that opens small popup on click
-local function AddSmallPopupFeature(parent, text, popupBuilder)
+-- Feature with simple popup (like photo)
+local function AddSimplePopupFeature(parent, text, popupBuilder)
     local Row = Instance.new("TextButton", parent)
     Row.Size = UDim2.new(1, -12, 0, 50)
     Row.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
@@ -612,9 +534,33 @@ local function AddSmallPopupFeature(parent, text, popupBuilder)
     Arrow.TextSize = 18
     Arrow.BackgroundTransparency = 1
     
-    Row.MouseButton1Click:Connect(function()
-        popupBuilder()
+    Row.MouseButton1Click:Connect(popupBuilder)
+    
+    return Row
+end
+
+-- Feature with toggle (no popup)
+local function AddToggleFeature(parent, text, settingKey, callback)
+    local Row = Instance.new("Frame", parent)
+    Row.Size = UDim2.new(1, -12, 0, 50)
+    Row.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+    local RowCorner = Instance.new("UICorner", Row); RowCorner.CornerRadius = UDim.new(0, 8)
+    
+    local Label = Instance.new("TextLabel", Row)
+    Label.Size = UDim2.new(1, -70, 1, 0)
+    Label.Position = UDim2.new(0, 18, 0, 0)
+    Label.Text = text
+    Label.TextColor3 = Color3.fromRGB(230, 230, 230)
+    Label.Font = Enum.Font.Gotham
+    Label.TextSize = 14
+    Label.BackgroundTransparency = 1
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    
+    local switch = CreateSwitch(Row, _G.Settings[settingKey], function(state)
+        _G.Settings[settingKey] = state
+        if callback then callback(state) end
     end)
+    switch.Position = UDim2.new(1, -65, 0.5, -14)
     
     return Row
 end
@@ -628,9 +574,9 @@ local SettingsTab = CreateTab("Settings", "⚙️")
 
 -- Main Tab
 AddSection(MainTab, "Fishing Engine")
--- Instant Fishing (small popup)
-AddSmallPopupFeature(MainTab, "Instant Fishing", function()
-    ShowSmallPopup("Instant Fishing", function(content, closePopup)
+-- Instant Fishing (simple popup)
+AddSimplePopupFeature(MainTab, "Instant Fishing", function()
+    ShowSimplePopup("Instant Fishing", function(content, close)
         -- Status toggle
         local statusFrame = Instance.new("Frame", content)
         statusFrame.Size = UDim2.new(1, 0, 0, 32)
@@ -647,20 +593,20 @@ AddSmallPopupFeature(MainTab, "Instant Fishing", function()
         end)
         statusSwitch.Position = UDim2.new(0.6, 0, 0.5, -14)
         
-        -- Delay slider (compact)
-        CreateSliderSmall(content, "Delay (seconds)", 0, 10, _G.Settings.InstaDelay, function(val)
+        -- Delay input
+        CreateInputBox(content, "Delay Complete", _G.Settings.InstaDelay, function(val)
             _G.Settings.InstaDelay = val
         end)
         
         -- Mode dropdown
-        CreateDropdownSmall(content, "Catch Mode", {"Perfect", "Good", "Random"}, _G.Settings.InstaMode, function(val)
+        CreateDropdownSimple(content, "Catch Mode", {"Perfect", "Good", "Random"}, _G.Settings.InstaMode, function(val)
             _G.Settings.InstaMode = val
         end)
         
         -- Save button
         local saveBtn = Instance.new("TextButton", content)
         saveBtn.Size = UDim2.new(0.8, 0, 0, 32)
-        saveBtn.Position = UDim2.new(0.1, 0, 1, -38)
+        saveBtn.Position = UDim2.new(0.1, 0, 1, -35)
         saveBtn.Text = "Save & Close"
         saveBtn.BackgroundColor3 = _G.Settings.ThemeColor
         saveBtn.TextColor3 = Color3.fromRGB(255,255,255)
@@ -668,13 +614,13 @@ AddSmallPopupFeature(MainTab, "Instant Fishing", function()
         saveBtn.TextSize = 12
         local btnCorner = Instance.new("UICorner", saveBtn)
         btnCorner.CornerRadius = UDim.new(0, 5)
-        saveBtn.MouseButton1Click:Connect(closePopup)
+        saveBtn.MouseButton1Click:Connect(close)
     end)
 end)
 
--- Auto Cast (small popup)
-AddSmallPopupFeature(MainTab, "Auto Cast", function()
-    ShowSmallPopup("Auto Cast", function(content, closePopup)
+-- Auto Cast
+AddSimplePopupFeature(MainTab, "Auto Cast", function()
+    ShowSimplePopup("Auto Cast", function(content, close)
         local statusFrame = Instance.new("Frame", content)
         statusFrame.Size = UDim2.new(1, 0, 0, 32)
         statusFrame.BackgroundTransparency = 1
@@ -690,13 +636,13 @@ AddSmallPopupFeature(MainTab, "Auto Cast", function()
         end)
         statusSwitch.Position = UDim2.new(0.6, 0, 0.5, -14)
         
-        CreateSliderSmall(content, "Cast Delay (seconds)", 0.5, 10, _G.Settings.CastDelay, function(val)
+        CreateInputBox(content, "Cast Delay (sec)", _G.Settings.CastDelay, function(val)
             _G.Settings.CastDelay = val
         end)
         
         local saveBtn = Instance.new("TextButton", content)
         saveBtn.Size = UDim2.new(0.8, 0, 0, 32)
-        saveBtn.Position = UDim2.new(0.1, 0, 1, -38)
+        saveBtn.Position = UDim2.new(0.1, 0, 1, -35)
         saveBtn.Text = "Save & Close"
         saveBtn.BackgroundColor3 = _G.Settings.ThemeColor
         saveBtn.TextColor3 = Color3.fromRGB(255,255,255)
@@ -704,13 +650,13 @@ AddSmallPopupFeature(MainTab, "Auto Cast", function()
         saveBtn.TextSize = 12
         local btnCorner = Instance.new("UICorner", saveBtn)
         btnCorner.CornerRadius = UDim.new(0, 5)
-        saveBtn.MouseButton1Click:Connect(closePopup)
+        saveBtn.MouseButton1Click:Connect(close)
     end)
 end)
 
--- Auto Sell (small popup)
-AddSmallPopupFeature(MainTab, "Auto Sell", function()
-    ShowSmallPopup("Auto Sell", function(content, closePopup)
+-- Auto Sell
+AddSimplePopupFeature(MainTab, "Auto Sell", function()
+    ShowSimplePopup("Auto Sell", function(content, close)
         local statusFrame = Instance.new("Frame", content)
         statusFrame.Size = UDim2.new(1, 0, 0, 32)
         statusFrame.BackgroundTransparency = 1
@@ -726,16 +672,16 @@ AddSmallPopupFeature(MainTab, "Auto Sell", function()
         end)
         statusSwitch.Position = UDim2.new(0.6, 0, 0.5, -14)
         
-        CreateSliderSmall(content, "Sell Value Threshold (≤)", 0, 1000, _G.Settings.SellThreshold, function(val)
+        CreateInputBox(content, "Sell Value Threshold (≤)", _G.Settings.SellThreshold, function(val)
             _G.Settings.SellThreshold = val
         end)
-        CreateDropdownSmall(content, "Rarity Filter", {"All", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"}, _G.Settings.SellRarity, function(val)
+        CreateDropdownSimple(content, "Rarity Filter", {"All", "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic"}, _G.Settings.SellRarity, function(val)
             _G.Settings.SellRarity = val
         end)
         
         local saveBtn = Instance.new("TextButton", content)
         saveBtn.Size = UDim2.new(0.8, 0, 0, 32)
-        saveBtn.Position = UDim2.new(0.1, 0, 1, -38)
+        saveBtn.Position = UDim2.new(0.1, 0, 1, -35)
         saveBtn.Text = "Save & Close"
         saveBtn.BackgroundColor3 = _G.Settings.ThemeColor
         saveBtn.TextColor3 = Color3.fromRGB(255,255,255)
@@ -743,7 +689,7 @@ AddSmallPopupFeature(MainTab, "Auto Sell", function()
         saveBtn.TextSize = 12
         local btnCorner = Instance.new("UICorner", saveBtn)
         btnCorner.CornerRadius = UDim.new(0, 5)
-        saveBtn.MouseButton1Click:Connect(closePopup)
+        saveBtn.MouseButton1Click:Connect(close)
     end)
 end)
 
@@ -781,8 +727,8 @@ end
 -- Security Tab
 AddSection(SecurityTab, "Protection System")
 AddToggleFeature(SecurityTab, "Anti AFK", "AntiAFK", function(state) end)
-AddSmallPopupFeature(SecurityTab, "Anti Staff", function()
-    ShowSmallPopup("Anti Staff", function(content, closePopup)
+AddSimplePopupFeature(SecurityTab, "Anti Staff", function()
+    ShowSimplePopup("Anti Staff", function(content, close)
         local statusFrame = Instance.new("Frame", content)
         statusFrame.Size = UDim2.new(1, 0, 0, 32)
         statusFrame.BackgroundTransparency = 1
@@ -798,13 +744,13 @@ AddSmallPopupFeature(SecurityTab, "Anti Staff", function()
         end)
         statusSwitch.Position = UDim2.new(0.6, 0, 0.5, -14)
         
-        CreateDropdownSmall(content, "Mode", {"Alert", "AutoLeave", "AutoHop"}, _G.Settings.AntiStaffMode, function(val)
+        CreateDropdownSimple(content, "Mode", {"Alert", "AutoLeave", "AutoHop"}, _G.Settings.AntiStaffMode, function(val)
             _G.Settings.AntiStaffMode = val
         end)
         
         local saveBtn = Instance.new("TextButton", content)
         saveBtn.Size = UDim2.new(0.8, 0, 0, 32)
-        saveBtn.Position = UDim2.new(0.1, 0, 1, -38)
+        saveBtn.Position = UDim2.new(0.1, 0, 1, -35)
         saveBtn.Text = "Save & Close"
         saveBtn.BackgroundColor3 = _G.Settings.ThemeColor
         saveBtn.TextColor3 = Color3.fromRGB(255,255,255)
@@ -812,7 +758,7 @@ AddSmallPopupFeature(SecurityTab, "Anti Staff", function()
         saveBtn.TextSize = 12
         local btnCorner = Instance.new("UICorner", saveBtn)
         btnCorner.CornerRadius = UDim.new(0, 5)
-        saveBtn.MouseButton1Click:Connect(closePopup)
+        saveBtn.MouseButton1Click:Connect(close)
     end)
 end)
 
@@ -983,4 +929,4 @@ end)
 -- Initialization
 Pages[1].Visible = true
 TabContainer:FindFirstChildOfClass("TextButton").TextColor3 = Color3.fromRGB(255, 255, 255)
-print("🌸 KAE TEMPEST HUB V1.5 LOADED – Small popups, tablet-friendly")
+print("🌸 KAE TEMPEST HUB V1.6 LOADED – Simple popups like reference image")
